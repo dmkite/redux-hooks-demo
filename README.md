@@ -1,8 +1,16 @@
 # Redux Hooks Demos
 
+To run this repo locally do the following:
+```sh
+git clone https://github.com/dmkite/redux-hooks-demo.git
+cd redux-hooks-demo
+npm i
+npm start
+```
+
 ## Intro
 Redux is a way to manage complex state in an application. It's not uncommon for components in different hierarchies to need to share information. When this happens, one might take the relevant information and embed it in the earliest common ancestor. When components share information in this way it leads to along trace of props passing and callbacks, which leads to lots of rerenders and passing irrelevant information down the component hierarchy. For example:
-```
+```js
 <GreatGrandparentComponent> // Has state and function to update state
     <GrandparentComponent1> // Receives state but does not use it
         <ParentComponent> // Receives state but does not use it
@@ -17,7 +25,7 @@ Redux is a way to manage complex state in an application. It's not uncommon for 
 ```
 
 In Redux this is simplified:
-```
+```js
 <GreatGrandparentComponent> 
     <GrandparentComponent1> 
         <ParentComponent>
@@ -43,7 +51,7 @@ The store holds state. It generally takes the form of a nested object.
 Actions are objects that __always__ have a `type` property and optionally have a `payload` property (named `payload` by convention). They describe what change is happening and provide information about that change, but they don't update state. Objects are 'dispatched' which is how they are picked up by reducers.
 
 You can dispatch an action by importing `useDispatch` from `react-redux` and adding this line to your component:
-```
+```js
 const dispatch = useDispatch()
 ```
 
