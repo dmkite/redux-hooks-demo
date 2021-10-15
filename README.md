@@ -48,6 +48,7 @@ const dispatch = useDispatch()
 ```
 
 You can see actions defined in `./actions.js`
+
 You can see actions dispatched in `./components/SignIn.jsx`
 
 ## Reducers 
