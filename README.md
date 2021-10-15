@@ -1,70 +1,65 @@
-# Getting Started with Create React App
+# Redux Hooks Demos
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Intro
+Redux is a way to manage complex state in an application. It's not uncommon for components in different hierarchies to need to share information. When this happens, one might take the relevant information and embed it in the earliest common ancestor. When components share information in this way it leads to along trace of props passing and callbacks, which leads to lots of rerenders and passing irrelevant information down the component hierarchy. For example:
+```
+<GreatGrandparentComponent> // Has state and function to update state
+    <GrandparentComponent1> // Receives state but does not use it
+        <ParentComponent> // Receives state but does not use it
+            <ChildComponent/> // Uses state and waits for an update
+        </ParentComponent>
+    </GrandparentComponent1>
 
-## Available Scripts
+    <GrandparentComponent2> // Receives callback but does not use it
+        <ParentComponent/> // Uses callback to trigger changes in ChildComponent
+    </GrandparentComponent2>
+</GreatGrandparentcomponent>
+```
 
-In the project directory, you can run:
+In Redux this is simplified:
+```
+<GreatGrandparentComponent> 
+    <GrandparentComponent1> 
+        <ParentComponent>
+            <ChildComponent/> // Hooks into the Redux store and waits for an update
+        </ParentComponent>
+    </GrandparentComponent1>
 
-### `yarn start`
+    <GrandparentComponent2> 
+        <ParentComponent/> // Dispatches an action to update the Redux store
+    </GrandparentComponent2>
+</GreatGrandparentcomponent>
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+At a fundamental level there are 3 main pillars of redux:
+1. Store
+2. Actions
+3. Reducers
+## Store
+The store holds state. It generally takes the form of a nested object.
 
-### `yarn test`
+## Actions 
+Actions are objects that __always__ have a `type` property and optionally have a `payload` property (named `payload` by convention). They describe what change is happening and provide information about that change, but they don't update state. Objects are 'dispatched' which is how they are picked up by reducers.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+You can dispatch an action by importing `useDispatch` from `react-redux` and adding this line to your component:
+```
+const dispatch = useDispatch()
+```
 
-### `yarn build`
+You can see actions defined in `./actions.js`
+You can see actions dispatched in `./components/SignIn.jsx`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Reducers 
+A reducer is a function that takes the old state and an action and produces new state. Redux intentionally uses immutable state, so it generates a new object every time. Conventionally these take the form of a switch case that looks at the `type` property of an object.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+You can see a reducer in `./reducers.js`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Hooking it up
+The store is created via combining all of your different reducers into the Redux store and providing it to the application at the highest point by wrapping the `<App/>` component in a special component provided by the `react-redux` package called `<Provider/>`.
 
-### `yarn eject`
+You can see this happening in `./index.js`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Individual components can access the store by using the `useSelector` hook. This takes all of the Redux store and passes the relevant content to the component in question. It's a good idea to pass as little of the store as necessary to prevent unneeded rerenders.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+You can see this happening in `./components/PrivacyNotice.jsx`

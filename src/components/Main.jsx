@@ -23,7 +23,7 @@ const articles = [
 ]
 
 
-export const Main = props => {
+export const Main = () => {
     console.log('The Main component has (re)rendered')
     return <main>
         {articles.map(article => <Article key={article.alt} {...article}/>)}
